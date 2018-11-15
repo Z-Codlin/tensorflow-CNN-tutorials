@@ -63,6 +63,10 @@ if __name__ == '__main__':
             example, lab = sess.run(batch)
             img = Image.fromarray(example, 'RGB')
             img.save(gen_picture+'/'+str(i)+'sample'+str(lab)+'.jpg')
+            if str(lab)=="0":
+                img.save(gen_picture + '/dog/' + str(i) + 'sample' + str(lab) + '.jpg')
+            else:
+                img.save(gen_picture + '/cat/' + str(i) + 'sample' + str(lab) + '.jpg')
             print(example, lab)
         coord.request_stop()
         coord.join(threads)
