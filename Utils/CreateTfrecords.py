@@ -21,7 +21,7 @@ def create_record():
             img = img.resize((64, 64))
             img_raw = img.tobytes() #将图片转化为原生bytes
             print(index, img_raw)
-            example = tf.train.Example(
+            example = tf.train.Example(  #这个如何使用？
                 features=tf.train.Features(feature={
                     "label": tf.train.Feature(int64_list=tf.train.Int64List(value=[index])),
                     "img_raw": tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw]))
@@ -57,10 +57,10 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         sess.run(init_op)
         coord = tf.train.Coordinator()
-        threads = tf.train.start_queue_runners(coord=coord)
+        threads = tf.train.start_queue_runners(coord=coord)  #这个函数的意义？
 
         for i in range(num_samples):
-            example, lab = sess.run(batch)
+            example, lab = sess.run(batch)  #这里tensorflow运行图是如何运行的？
             img = Image.fromarray(example, 'RGB')
             img.save(gen_picture+'/'+str(i)+'sample'+str(lab)+'.jpg')
             if str(lab)=="0":
