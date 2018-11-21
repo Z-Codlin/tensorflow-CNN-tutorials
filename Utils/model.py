@@ -79,3 +79,60 @@ def inference(images, batch_size, n_classes):
 
 #Softmax回归层
 #将前面的FC层输出，做一个线性回归，计算出每一类的得分，在这里是两类，所以这个层输出的是两个得分。
+    with tf.variable_scope('softmax_linear') as scope:
+        weights = tf.Variable(tf.truncated_normal(shape=[128, n_classes], stddev=0.005, dtype=tf.float32),
+                              name='softmax_linear', dtype = tf.float32)
+        biases = tf.Variable(tf.constant(value=0.1, dtype = tf.float32, shape=[n_classes]),
+                             name='biases', dtype = tf.float32)
+        softmax_linear = tf.add(tf.matmul(local4, weights), biases, name='softmax_linear')
+
+    return softmax_linear
+
+#--------------------------------
+#loss 计算
+def losses(logits, labels):
+    with tf.variable_scope('loss') as scope:
+        cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels, name='xentropy_per_example')
+        loss = tf.reduce_mean(cross_entropy, name='loss')
+        tf.summary.scalar(scope.name+'/loss',loss)
+    return loss
+
+#loss损失值优化
+    #输入参数：loss learning_rate,学习速率
+    #返回参数：train_op,训练参数要输入sess.run中让模型去训练
+def training(loss, learning_rate):
+    with tf.name_scope('optimizer'):
+        optimizer = tf.train.AdadeltaOptimizer(learning_rate= learning_rate)
+        global_step = tf.Variable(0, name='global_step', trainable=False)
+        train_op = optimizer.minimize(loss, global_step= global_step)
+    return train_op
+
+def evaluation(logits, labels):
+    with tf.variable_scope('accuracy') as scope:
+        correct = tf.nn.in_top_k(logits, labels, 1)
+        correct = tf.cast(correct, tf.float16)
+        accuracy = tf.reduce_mean(correct)
+        tf.summary.scalar(scope.name+'/accuracy', accuracy)
+    return accuracy
+# tensorflow下的局部相应归一化函数：tf.nn.lrn
+#
+# tf.nn.lrn = （input，depth_radius=None，bias=None，alpha=None，beta=None，name=None）
+#
+#        input是一个4D的tensor，类型必须为float。
+#
+#        depth_radius是一个类型为int的标量，表示囊括的kernel的范围。
+#
+#        bias是偏置。
+#
+#        alpha是乘积系数，是在计算完囊括范围内的kernel的激活值之和之后再对其进行乘积。
+#
+#        beta是指数系数。
+#
+# LRN是normalization的一种，normalizaiton的目的是抑制，抑制神经元的输出。而LRN的设计借鉴了神经生物学中的一个概念，叫做“侧抑制”。
+#
+# 侧抑制：相近的神经元彼此之间发生抑制作用，即在某个神经元受到刺激而产生兴奋时，再侧记相近的神经元，则后者所发生的兴奋对前产生的抑制作用。也就是说，抑制侧是指相邻的感受器之间能够相互抑制的现象。
+# ---------------------
+# 作者：ywx1832990
+# 来源：CSDN
+# 原文：https://blog.csdn.net/ywx1832990/article/details/78610711
+# 版权声明：本文为博主原创文章，转载请附上博文链接！
