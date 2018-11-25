@@ -67,7 +67,7 @@ def get_batch(image, label, image_W, image_H, batch_size, capacity):
 
 
 # step2：将图像解码，不同类型的图像不能混在一起，要么只用jpeg，要么只用png等。
-    image = tf.image.decode_and_crop_jpeg(image_contents, channels=3)
+    image = tf.image.decode_jpeg(image_contents, channels=3)
 
 # step3: 数据预处理，对图像进行旋转，缩放，裁剪，归一化等操作，让计算出的模型更健壮
     image = tf.image.resize_image_with_crop_or_pad(image, image_W, image_H)
