@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-import Utils.model
+import Utils.model as model
 from Utils.GetData import get_files
 
 def get_one_image(train):
@@ -26,4 +26,23 @@ def evalute_one_image(image_array):
         image = tf.cast(image_array, tf.float32)
         image = tf.image.per_image_standardization(image)
         image = tf.reshape(image, [1, 64, 64, 3])
-        
+
+        logit = model.inference(image, BATCH_SIZE, N_CLASSES)
+        logit = tf.nn.softmax(logit)
+
+        x = tf.placeholder(tf.float32, shape=[64, 64, 3])
+
+        logs_train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata/'
+
+        saver = tf.train.Saver()
+        with tf.Session() as sess:
+            print("Reading checkpoints..")
+            ckpt = tf.train.get_checkpoint_state(logs_train_dir)
+            if ckpt and ckpt.model_checkpoint_path:
+                global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+                saver.restore(sess, ckpt.model_checkpoint_path)
+                print('Loading succuss, global_step is %s' %global_step)
+            else:
+                print('No checkpoint file found')
+            prediction = sess.run(logit, feed_dict={x: image_array})
+            max_index = np.argmax(prediction)
