@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata/'
+train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata'
 
 dog = []
 label_dog = []
@@ -31,6 +31,8 @@ def get_files(file_dir, radio):
     #将所有的img和label转换成list
     all_image_list = list(temp[:, 0])
     all_label_list = list(temp[:, 1])
+    print("zcl")
+    print(all_image_list[1])
 
     #将所得List分为两部分，一部分用来训练，一部分用来测试
     #radio是测试集的比例

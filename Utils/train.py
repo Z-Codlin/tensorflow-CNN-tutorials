@@ -13,8 +13,8 @@ MAX_STEP = 200
 learning_rate = 0.0001
 
 #获取批次batch
-train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata/'
-logs_train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata/'
+train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata'
+logs_train_dir = 'E:/GithubProject/tensorflow-CNN-tutorials/inputdata'
 
 train, train_label, val, val_label = input_data.get_files(train_dir, 0.3)
 #训练数据及标签
